@@ -1,0 +1,431 @@
+@font-face {
+    font-family: 'Minecraft'; 
+    src: url('Minecraft.ttf') format('truetype'); /* Шлях до файлу */
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* General Styles */
+body {
+    background-image: url('1.png');
+    background-repeat: repeat;
+    font-family: 'Minecraft';
+    color: white;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    height: 100vh;
+}
+
+.photo-icon {
+    height: 60px;
+    width: 60px;
+    border-radius: 50%;
+}
+
+.logo {
+    display: block;
+    position: absolute;
+    width: 90px;
+    height: 20px;
+}
+
+h2, h3 {
+    font-size: 24px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    margin: 0;
+}
+
+/* Sidebar Styles */
+.sidebar {
+    width: 20%;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 20px;
+    box-shadow: 4px 4px 0px black;
+    overflow-y: auto;
+    flex-shrink: 0; /* Prevent sidebar from shrinking */
+}
+
+.sidebar h3 {
+    margin-bottom: 20px;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar li {
+    font-size: 12px;
+    margin: 10px 0;
+    cursor: pointer;
+}
+
+.sidebar li:hover {
+    color: yellow;
+}
+
+/* Chat Container Styles */
+.chat-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0; /* Essential for proper flex scrolling */
+}
+
+.chat-header {
+    background: rgba(0, 0, 0, 0.8);
+    padding: 15px;
+    border-bottom: 3px solid white;
+    flex-shrink: 0; /* Prevent header from shrinking */
+}
+
+.chat-messages {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto; /* This enables scrolling */
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    /* New additions for better scrolling behavior */
+    min-height: 0; /* Crucial for flex children to scroll */
+    will-change: transform; /* Optimizes scrolling performance */
+    overscroll-behavior: contain; /* Prevents scroll chaining */
+    scrollbar-width: thin; /* For Firefox */
+    scrollbar-color: #555 #222; /* For Firefox */
+}
+
+.chat-messages::-webkit-scrollbar {
+    width: 8px;
+}
+.chat-messages::-webkit-scrollbar-track {
+    background: #222;
+}
+.chat-messages::-webkit-scrollbar-thumb {
+    background: #555;
+    border-radius: 4px;
+}
+.chat-messages::-webkit-scrollbar-thumb:hover {
+    background: #777;
+}
+
+.message {
+    padding: 12px 15px;
+    border-radius: 8px;
+    max-width: 75%;
+    font-size: 14px;
+    line-height: 1.4;
+    word-wrap: break-word;
+    /* Prevent messages from shrinking */
+    flex-shrink: 0;
+    /* Smooth rendering */
+    will-change: transform;
+}
+
+.message.sent {
+    background: rgba(255, 255, 255, 0.9);
+    color: black;
+    align-self: flex-end; /* Align to the right */
+    box-shadow: 4px 4px 0px white;
+}
+
+.message.received {
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    align-self: flex-start; /* Align to the left */
+    box-shadow: 4px 4px 0px black;
+}
+.chat-input {
+    display: flex;
+    padding: 15px;
+    background: rgba(0, 0, 0, 0.8);
+    border-top: 3px solid white;
+    flex-shrink: 0; /* Prevent input area from shrinking */
+}
+
+.chat-input input {
+    flex: 1;
+    padding: 10px;
+    border: 3px solid black;
+    background: white;
+    font-family: 'Minecraft';
+    font-size: 12px;
+    text-align: left;
+}
+
+.chat-input button {
+    background: black;
+    color: white;
+    font-family: 'Minecraft';
+    border: 3px solid white;
+    padding: 10px 20px;
+    cursor: pointer;
+    box-shadow: 4px 4px 0px white;
+    margin-left: 10px;
+}
+
+.chat-input button:hover {
+    background: white;
+    color: black;
+    border: 3px solid black;
+    box-shadow: 4px 4px 0px black;
+}
+
+/* Add these styles to your existing CSS */
+
+/* Audio player customization */
+audio {
+    width: 250px;
+    height: 40px;
+    filter: drop-shadow(4px 4px 0px rgba(0, 0, 0, 0.5));
+    outline: none;
+}
+
+/* Custom audio controls for sent messages */
+.message.sent audio {
+    filter: drop-shadow(4px 4px 0px white);
+}
+
+/* Custom audio controls for received messages */
+.message.received audio {
+    filter: drop-shadow(4px 4px 0px black);
+}
+
+/* Audio message container styling */
+.message.audio-message {
+    padding: 15px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+}
+
+/* Sent audio message */
+.message.sent.audio-message {
+    background: rgba(255, 255, 255, 0.9);
+    color: black;
+    box-shadow: 4px 4px 0px white;
+}
+
+/* Received audio message */
+.message.received.audio-message {
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    box-shadow: 4px 4px 0px black;
+}
+
+/* Audio duration indicator */
+.audio-duration {
+    font-size: 10px;
+    margin-left: 10px;
+    opacity: 0.7;
+}
+
+/* Audio waveform visualization (optional) */
+.audio-wave {
+    display: inline-block;
+    height: 20px;
+    width: 60px;
+    background: repeating-linear-gradient(
+        90deg,
+        currentColor,
+        currentColor 2px,
+        transparent 2px,
+        transparent 4px
+    );
+    margin-right: 10px;
+    opacity: 0.7;
+}
+
+/* Record button active state */
+#record-button.recording {
+    background: red !important;
+    color: white !important;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.7); }
+    70% { box-shadow: 0 0 0 10px rgba(255, 0, 0, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 0, 0, 0); }
+}
+
+/* Audio message timestamp */
+.audio-timestamp {
+    font-size: 8px;
+    margin-top: 5px;
+    opacity: 0.6;
+    text-align: right;
+}
+
+/* Video Message Styles */
+.message.video-message {
+    position: relative;
+    padding: 0;
+    border-radius: 18px;
+    overflow: hidden;
+    max-width: 250px;
+    margin: 8px 0;
+}
+
+.message.sent.video-message {
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 4px 4px 0px white;
+    align-self: flex-end;
+}
+
+.message.received.video-message {
+    background: rgba(0, 0, 0, 0.8);
+    box-shadow: 4px 4px 0px black;
+    align-self: flex-start;
+}
+
+.message video {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+    background: #000;
+    border: 4px solid rgba(255, 255, 255, 0.1);
+    transition: transform 0.2s ease;
+}
+
+.message.sent video {
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.message.received video {
+    border-color: rgba(0, 0, 0, 0.3);
+}
+
+/* Video controls styling */
+.message video::-webkit-media-controls-panel {
+    background: rgba(0, 0, 0, 0.5) !important;
+    border-radius: 0 0 50% 50% !important;
+}
+
+.message video::-webkit-media-controls-play-button,
+.message video::-webkit-media-controls-mute-button {
+    background-color: white;
+    border-radius: 50%;
+}
+
+/* Video duration indicator */
+.video-duration {
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 3px 6px;
+    border-radius: 8px;
+    font-size: 10px;
+    font-family: 'Minecraft';
+}
+
+.message.sent .video-duration {
+    background: rgba(255, 255, 255, 0.7);
+    color: black;
+}
+
+/* Preview styling */
+#circle-prev {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: #000;
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    margin: 10px auto;
+    display: none;
+}
+
+/* Video recording buttons */
+#record-circle {
+    color: white;
+    border: 2px solid white;
+    box-shadow: 3px 3px 0px black;
+}
+
+#stop-circle {
+    background: #f44336;
+    color: white;
+    border: 2px solid white;
+    box-shadow: 3px 3px 0px black;
+}
+
+#record-circle:active, #stop-circle:active {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0px black;
+}
+
+/* Стилі для контейнера відео-повідомлення */
+.video-message-container {
+    margin: 10px;
+    display: flex;
+    justify-content: flex-start; /* або flex-end для відправлених */
+    max-width: 80%;
+}
+
+.video-message-container.sent {
+    justify-content: flex-end;
+    margin-left: auto;
+}
+
+.video-message-container.received {
+    justify-content: flex-start;
+    margin-right: auto;
+}
+
+/* Стилі для круглого відео */
+.round-video {
+    width: 250px;
+    height: 250px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 5px solid #ffffff; /* Зелений бордер */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: transparent;
+}
+
+/* Ховер-ефект */
+.round-video:hover {
+    transform: scale(1.03);
+    transition: transform 0.3s ease;
+}
+
+
+.Smallkid-btn {
+    position: fixed;  /* This makes it stay in place even when scrolling */
+    bottom: 30px;     /* 30px from the bottom */
+    left: 50px;      /* Adjust this to position horizontally (20px from right) */
+    z-index: 1000;    /* Ensures it stays above other elements */
+    
+    /* Add your existing button styles here */
+    background: black;
+    color: white;
+    font-family: 'Minecraft';
+    border: 3px solid white;
+    padding: 10px 20px;
+    cursor: pointer;
+    box-shadow: 4px 4px 0px white;
+}
+
+.Smallkid-btn:hover {
+    background: white;
+    color: black;
+    border: 3px solid black;
+    box-shadow: 4px 4px 0px black;
+}
+
+
+
+
+
+
+
+
+
+

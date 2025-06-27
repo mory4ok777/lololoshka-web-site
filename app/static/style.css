@@ -1,0 +1,134 @@
+/* Основные стили */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f5f5f5;
+    color: #333;
+    min-height: 100vh;
+    position: relative;
+}
+
+/* Фоновая картинка под формой */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 150%;
+    height: 100%;
+    background: url('podval.jpeg') no-repeat 0 0;
+    background-size: auto 100%; /* Сохраняет пропорции, растягивает по высоте */
+    z-index: -1;
+}
+
+/* Шапка с изображением */
+header {
+    height: 65vh;
+    background-image: url('imageblock1.png');
+    background-size: cover;
+    background-position: center;
+    width: 100%;
+    position: relative;
+}
+
+/* Навигационное меню */
+nav {
+    background-image: url('nav-image.png');
+    background-size: cover;
+    background-position: center;
+    padding: 1rem 0;
+}
+
+nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+nav a:hover {
+    text-decoration: underline;
+}
+
+/* Основное содержимое */
+main {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 2rem;
+    position: relative;
+}
+
+/* Форма регистрации (длинная картинка) */
+.register-container {
+    max-width: 550px;
+    margin-left: 10%;
+    padding: 2rem;
+    background: 
+        linear-gradient(rgba(245, 245, 245, 0.10), rgba(245, 245, 245, 0.10)),
+        url('reg-image.webp') left top/auto 100% no-repeat; /* Фиксируем в левом верхнем углу */
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    min-height: 600px; /* Высота длинной картинки */
+}
+
+.register-container h2 {
+    margin-top: 0;
+    color: #000000;
+}
+
+.register-container form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.register-container label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    font-weight: bold;
+    color: #000000;
+}
+
+.register-container input {
+    padding: 0.8rem;
+    border: 1px solid #a027f1;
+    border-radius: 4px;
+    font-size: 1rem;
+    background-color: rgba(204, 0, 204, 0.10);
+}
+
+.register-container button {
+    background-color: rgba(230, 167, 86, 0.8);
+    color: rgb(0, 0, 0);
+    border: none;
+    padding: 1rem;
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: 0.5rem;
+}
+
+.register-container button:hover {
+    background-color: #d18f42;
+}
+
+/* Подвал */
+footer {
+    text-align: center;
+    padding: 1rem;
+    background-color: #444;
+    color: white;
+    margin-top: 2rem;
+}

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Salt</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='/chat.css') }}">
+</head>
+<body>
+    <div class="sidebar">
+        <h3>Chats</h3>
+        <input type="text" id="search-user" placeholder="jobo ffer" oninput="search_users()">
+        <ul id="user-list"></ul>
+        <ul id="chat-list">
+            {% for chat in current_user.chats %}
+                <li>
+                    <a href="{{ url_for('main.chat', chat_id=chat.id) }}">
+                        Chat with {{ chat.user1.username if chat.user2_id == current_user.id else chat.user2.username }}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+        
+    </div>
+
+    <div class="chat-container">
+        <div class="chat-header">
+            {% if chat %}
+                Chat with {{ chat.receiver.username if chat.sender_id == current_user.id else chat.sender.username }}
+            {% else %}
+                <h2>No chat selected</h2>
+            {% endif %}
+        </div>
+
+        <div class="chat-messages" id="messages">
+            {% for msg in messages %}
+                <div class="message {% if msg.sender_id == current_user.id %}sent{% else %}received{% endif %}">
+                    {{ msg.text }}
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="chat-input">
+            <input id="message" autocomplete="off" placeholder="Type a message...">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+    <audio id="player" controls style="display: none;"> </audio>
+    <script>
+        var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
+        var chat_id = "{{ chat.id if chat else '' }}";
+        var current_user_id = "{{ current_user.id }}";
+        socket.on("message", function(msg) {
+            if (msg.chat_id === chat_id) {
+                var messagesDiv = document.getElementById("messages");
+                var newMessage = document.createElement("div");
+                newMessage.className = "message " + (msg.sender_id == current_user_id ? "sent" : "received");
+                newMessage.textContent = msg.text;
+                messagesDiv.appendChild(newMessage);
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            }
+        });
+        function sendMessage() {
+            var messageInput = document.getElementById("message");
+            var messageText = messageInput.value.trim();
+            if (messageText && chat_id) {
+                socket.emit("send_message", {
+                    chat_id: chat_id,
+                    text: messageText,
+                    user_id: current_user_id
+                });
+                messageInput.value = "";
+            }
+        }
+
+        
+        if (chat_id) {
+            socket.emit("join", {chat_id: chat_id});
+        }
+        function search_users() {
+            var input = document.getElementById("search-user").value.toLowerCase();
+            var userList = document.getElementById("user-list");
+            userList.innerHTML = ""; // Clear the list
+            {% for user in users %}
+                if ("{{ user.username }}".toLowerCase().includes(input)) {
+                    var li = document.createElement("li");
+                    li.textContent = "{{ user.username }}";
+                    li.onclick = function() {
+                        window.location.href = "{{ url_for('main.chat', chat_id=user.id) }}";
+                    };
+                    userList.appendChild(li);
+                }
+            {% endfor %}
+        }
+     
+    </script>
+<body>
+<html>

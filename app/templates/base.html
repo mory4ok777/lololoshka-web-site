@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Arhei{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='/style.css') }}">
+</head>
+<body>
+    <header>
+        <h1></h1>
+    </header>
+<nav>
+        <ul>
+            {% if current_user.is_authenticated %}
+            <li><a href="{{ url_for('main.logout') }}">Logout</a></li>
+            {% else %}
+            <li><a href="{{ url_for('main.login') }}">Login</a></li>
+            <li><a href="{{ url_for('main.register') }}">Register</a></li>
+            {% endif %}
+        </ul>
+</nav>
+    <main>
+        {% block content %}{% endblock %}
+
+    </main>
+    <footer>
+        <p>&copy; 2024 My Website</p>
+    </footer>
+    {% block scripts %}{% endblock %}
+</body>
+</html>
