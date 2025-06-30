@@ -39,14 +39,21 @@ def home():
     messages = MSG.query.all()
     users = User.query.all()
     return render_template("chat.html", messages=messages, users=users)
-@main.route('/chat/<int:chat_id>',methods = ['GET'])
+@main.route('/chat/<int:chat_id>', methods=['GET'])
 @login_required
 def chat(chat_id):
-    chat = Chat.query.get_or_404(chat_id)
-    if current_user.id not in [chat.receiver_id,chat.sender_id]:
-        flash("You're not a part of this conversation, try and make one")
-    messages = MSG.query.filter_by(chat_id = chat.id).order_by(MSG.timestamp.asc()).all()
-    return render_template('chat.html',messages=messages, chat = chat)
+    chat = Chat.query.get(chat_id)
+    if not chat:
+        flash("Chat not found")
+        return redirect(url_for('main.home'))
+    
+    if current_user.id not in [chat.sender_id, chat.receiver_id]:
+        flash("You're not a part of this conversation")
+        return redirect(url_for('main.home'))
+    
+    messages = MSG.query.filter_by(chat_id=chat.id).order_by(MSG.timestamp.asc()).all()
+    users = User.query.all()  # Add this to pass users to template
+    return render_template('chat.html', messages=messages, chat=chat, users=users)
 
 
 

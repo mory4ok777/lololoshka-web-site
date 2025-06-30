@@ -78,20 +78,25 @@
             socket.emit("join", {chat_id: chat_id});
         }
         function search_users() {
-            var input = document.getElementById("search-user").value.toLowerCase();
-            var userList = document.getElementById("user-list");
-            userList.innerHTML = ""; // Clear the list
-            {% for user in users %}
-                if ("{{ user.username }}".toLowerCase().includes(input)) {
+    var input = document.getElementById("search-user").value.toLowerCase();
+    var userList = document.getElementById("user-list");
+    userList.innerHTML = "";
+    
+    if (input.length > 0) {
+        fetch(`/search_users?query=${input}`)
+            .then(response => response.json())
+            .then(users => {
+                users.forEach(user => {
                     var li = document.createElement("li");
-                    li.textContent = "{{ user.username }}";
+                    li.textContent = user.username;
                     li.onclick = function() {
-                        window.location.href = "{{ url_for('main.chat', chat_id=user.id) }}";
+                        window.location.href = `/start_chat/${user.id}`;
                     };
                     userList.appendChild(li);
-                }
-            {% endfor %}
-        }
+                });
+            });
+    }
+}
      
     </script>
 <body>
