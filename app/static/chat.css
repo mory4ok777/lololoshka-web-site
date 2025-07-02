@@ -8,7 +8,7 @@
 /* General Styles */
 body {
     background-image: url('1.png');
-    background-repeat: repeat;
+
     font-family: 'Minecraft';
     color: white;
     text-align: center;
@@ -76,7 +76,7 @@ h2, h3 {
 }
 
 .chat-header {
-    background: rgba(0, 0, 0, 0.8);
+    background: rgba(141, 11, 141, 0.8);
     padding: 15px;
     border-bottom: 3px solid white;
     flex-shrink: 0; /* Prevent header from shrinking */
@@ -94,21 +94,21 @@ h2, h3 {
     will-change: transform; /* Optimizes scrolling performance */
     overscroll-behavior: contain; /* Prevents scroll chaining */
     scrollbar-width: thin; /* For Firefox */
-    scrollbar-color: #555 #222; /* For Firefox */
+    scrollbar-color: #812ba3 #702d85; /* For Firefox */
 }
 
 .chat-messages::-webkit-scrollbar {
     width: 8px;
 }
 .chat-messages::-webkit-scrollbar-track {
-    background: #222;
+    background: #9c429c;
 }
 .chat-messages::-webkit-scrollbar-thumb {
-    background: #555;
+    background: #693370;
     border-radius: 4px;
 }
 .chat-messages::-webkit-scrollbar-thumb:hover {
-    background: #777;
+    background: #7e3a7e;
 }
 
 .message {
@@ -126,7 +126,7 @@ h2, h3 {
 
 .message.sent {
     background: rgba(255, 255, 255, 0.9);
-    color: black;
+    color: rgb(129, 42, 141);
     align-self: flex-end; /* Align to the right */
     box-shadow: 4px 4px 0px white;
 }
@@ -135,12 +135,12 @@ h2, h3 {
     background: rgba(0, 0, 0, 0.8);
     color: white;
     align-self: flex-start; /* Align to the left */
-    box-shadow: 4px 4px 0px black;
+    box-shadow: 4px 4px 0px rgb(156, 22, 168);
 }
 .chat-input {
     display: flex;
     padding: 15px;
-    background: rgba(0, 0, 0, 0.8);
+    background: rgba(221, 76, 202, 0.8);
     border-top: 3px solid white;
     flex-shrink: 0; /* Prevent input area from shrinking */
 }
@@ -148,7 +148,7 @@ h2, h3 {
 .chat-input input {
     flex: 1;
     padding: 10px;
-    border: 3px solid black;
+    border: 3px solid rgb(168, 62, 182);
     background: white;
     font-family: 'Minecraft';
     font-size: 12px;
@@ -156,7 +156,7 @@ h2, h3 {
 }
 
 .chat-input button {
-    background: black;
+    background: rgb(207, 20, 231);
     color: white;
     font-family: 'Minecraft';
     border: 3px solid white;
@@ -168,9 +168,9 @@ h2, h3 {
 
 .chat-input button:hover {
     background: white;
-    color: black;
-    border: 3px solid black;
-    box-shadow: 4px 4px 0px black;
+    color: rgb(173, 56, 228);
+    border: 3px solid rgb(145, 30, 253);
+    box-shadow: 4px 4px 0px rgb(56, 30, 65);
 }
 
 /* Add these styles to your existing CSS */
