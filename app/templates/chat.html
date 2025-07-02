@@ -47,57 +47,68 @@
     </div>
     <audio id="player" controls style="display: none;"> </audio>
     <script>
-        var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
-        var chat_id = "{{ chat.id if chat else '' }}";
-        var current_user_id = "{{ current_user.id }}";
-        socket.on("message", function(msg) {
-            if (msg.chat_id === chat_id) {
-                var messagesDiv = document.getElementById("messages");
-                var newMessage = document.createElement("div");
-                newMessage.className = "message " + (msg.sender_id == current_user_id ? "sent" : "received");
-                newMessage.textContent = msg.text;
-                messagesDiv.appendChild(newMessage);
-                messagesDiv.scrollTop = messagesDiv.scrollHeight;
-            }
+        var socket = io();
+        var chat_id = "{{chat.id if chat else ''}}"
+        var current_user_id = "{{current_user.id}}"
+                window.addEventListener('load', function() {
+            scrollToBottom();
+            
+            // Add event listener for Enter key on message input
+            document.getElementById('message').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault(); // Prevent default form submission behavior
+                    sendMessage();
+                }
+            });
         });
-        function sendMessage() {
-            var messageInput = document.getElementById("message");
-            var messageText = messageInput.value.trim();
-            if (messageText && chat_id) {
-                socket.emit("send_message", {
-                    chat_id: chat_id,
-                    text: messageText,
-                    user_id: current_user_id
-                });
-                messageInput.value = "";
-            }
+
+        if(chat_id){
+            socket.emit('join',{chat_id:chat_id})
         }
 
-        
-        if (chat_id) {
-            socket.emit("join", {chat_id: chat_id});
+        function scrollToBottom() {
+            const messages = document.getElementById('messages');
+            messages.scrollTop = messages.scrollHeight;
         }
-        function search_users() {
-    var input = document.getElementById("search-user").value.toLowerCase();
-    var userList = document.getElementById("user-list");
-    userList.innerHTML = "";
-    
-    if (input.length > 0) {
-        fetch(`/search_users?query=${input}`)
+
+        socket.on('message', function(msg) {
+            var div = document.createElement('div');
+            div.className = msg.sender_id == current_user_id ? 'message sent' : 'message received';
+            div.appendChild(document.createTextNode(msg.text));
+            document.getElementById('messages').appendChild(div);
+            scrollToBottom();
+        });
+
+                function sendMessage() {
+            var msg = document.getElementById('message').value;
+            if (msg.trim() === "") return;
+
+            socket.emit('message', {
+                chat_id: chat_id,
+                text: msg,
+                user_id: current_user_id,
+            });
+            document.getElementById('message').value = '';
+        }
+
+
+        function search_users(){
+            var query = document.getElementById("search-user").value;
+            fetch(`/search_users?query=${query}`)
             .then(response => response.json())
-            .then(users => {
-                users.forEach(user => {
+            .then(data => {
+                var userlist = document.getElementById("user-list");
+                userlist.innerHTML = "";
+                data.forEach(user => {
                     var li = document.createElement("li");
-                    li.textContent = user.username;
-                    li.onclick = function() {
-                        window.location.href = `/start_chat/${user.id}`;
-                    };
-                    userList.appendChild(li);
+                    var a = document.createElement("a");
+                    a.href = `/start_chat/${user.id}`;
+                    a.textContent = user.username;
+                    li.appendChild(a);
+                    userlist.appendChild(li);
                 });
             });
-    }
-}
-     
+        }
     </script>
 <body>
 <html>
