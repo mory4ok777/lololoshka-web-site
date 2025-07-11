@@ -23,31 +23,49 @@
         
     </div>
 
-    <div class="chat-container">
-        <div class="chat-header">
-            {% if chat %}
-                Chat with {{ chat.receiver.username if chat.sender_id == current_user.id else chat.sender.username }}
-            {% else %}
-                <h2>No chat selected</h2>
-            {% endif %}
-        </div>
-
-        <div class="chat-messages" id="messages">
+    <div class="chat-messages" id="messages">
             {% for msg in messages %}
-                <div class="message {% if msg.sender_id == current_user.id %}sent{% else %}received{% endif %}">
-                    {{ msg.text }}
-                </div>
+                {% if msg.message_type == 'video' %}
+                    <div class="video-message-container {% if msg.sender_id == current_user.id %}sent{% else %}received{% endif %}">
+                            <video class="round-video" onclick="VideoOnclick(this)">
+                            <source src="{{ url_for('main.send_video', filename=msg.media_url.split('/')[-1]) }}" type="video/webm">
+                        </video>
+                    </div>
+                {% else %}
+                    <div class="message {% if msg.sender_id == current_user.id %}sent{% else %}received{% endif %}">
+                        {% if msg.message_type == 'audio' %}
+                            <audio controls>
+                                <source src="{{ url_for('main.send_audio', filename=msg.media_url.split('/')[-1]) }}" type="audio/webm">
+                            </audio>
+                        {% elif msg.message_type == 'photo' %}
+                            <img src="{{ url_for('main.send_photo', filename=msg.media_url.split('/')[-1]) }}" 
+                                 style="max-height: 300px; max-width: 250px;">
+                        {% else %}
+                            {{ msg.text }}
+                        {% endif %}
+                    </div>
+                {% endif %}
             {% endfor %}
         </div>
 
         <div class="chat-input">
             <input id="message" autocomplete="off" placeholder="Type a message...">
             <button onclick="sendMessage()">Send</button>
+            <button id="record-button">Audio</button>
+            <button onclick="uploadPhoto()">Photo</button>
+
         </div>
     </div>
     <audio id="player" controls style="display: none;"> </audio>
     <script>
         var socket = io();
+
+        let mediaRecorder;
+        let audioChunks = [];
+        let audioStream;
+        let videoStream;
+        let videoChunks = [];
+        const maxVideoDuration = 30000;
         var chat_id = "{{chat.id if chat else ''}}"
         var current_user_id = "{{current_user.id}}"
                 window.addEventListener('load', function() {
@@ -75,6 +93,41 @@
             var div = document.createElement('div');
             div.className = msg.sender_id == current_user_id ? 'message sent' : 'message received';
             div.appendChild(document.createTextNode(msg.text));
+            document.getElementById('messages').appendChild(div);
+            scrollToBottom();
+        });
+
+
+
+        socket.on('audio_message', function(msg) {
+            var div = document.createElement('div');
+            div.className = msg.sender_id == current_user_id ? 'message sent' : 'message received';
+            
+            var audio = document.createElement('audio');
+            audio.controls = true;
+            audio.src = msg.audio_url + '?t=' + new Date().getTime(); // Cache buster
+            
+            div.appendChild(audio);
+            document.getElementById('messages').appendChild(div);
+            scrollToBottom();
+        });
+
+        socket.on('photo_message', function(msg) {
+            const div = document.createElement('div');
+            div.className = msg.sender_id == current_user_id ? 'message sent' : 'message received';
+
+            const imgContainer = document.createElement('div');
+            imgContainer.style.display = 'flex';
+            imgContainer.style.flexDirection = 'column'
+
+            const img = document.createElement('img');
+            img.src = msg.image_url;
+            img.style.maxHeight = '300px'
+            img.style.maxWidth = '250px'
+       
+            imgContainer.appendChild(img);
+            div.appendChild(imgContainer);
+     
             document.getElementById('messages').appendChild(div);
             scrollToBottom();
         });
@@ -108,6 +161,102 @@
                     userlist.appendChild(li);
                 });
             });
+        }
+
+
+
+    function uploadPhoto() {
+
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = 'image/*';
+    
+    fileInput.onchange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+        sendPhoto(file); 
+        }
+    };
+    
+    fileInput.click();
+    }
+
+
+
+
+
+     document.getElementById('record-button').addEventListener('click', async function() {
+            if (mediaRecorder?.state === 'recording') {
+                mediaRecorder.stop();
+                this.textContent = 'Record Voice';
+                this.classList.remove('recording');
+                
+                audioStream.getTracks().forEach(track => track.stop());
+            } else {
+                try {
+                    audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    
+                    mediaRecorder = new MediaRecorder(audioStream, { 
+                        mimeType: 'audio/webm' 
+                    });
+                    
+                    audioChunks = [];
+                    
+                    mediaRecorder.start();
+                    this.textContent = 'Stop Recording';
+                    this.classList.add('recording');
+                    
+                    mediaRecorder.ondataavailable = event => {
+                        if (event.data.size > 0){
+                            audioChunks.push(event.data);
+                        }
+                    };
+                    
+                    mediaRecorder.onstop = async () => {
+                        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                        
+                        const reader = new FileReader();
+                        reader.readAsDataURL(audioBlob);
+                        
+                        reader.onload = () => {
+                            socket.emit('audio_message', {
+                                chat_id: chat_id,
+                                audio: reader.result,
+                                user_id: current_user_id,
+                                mime_type: 'audio/webm'
+                            });
+                        };
+                    };
+                } catch (error) {
+                    console.error('Error recording audio:', error);
+                    alert('Could not access microphone');
+                    this.classList.remove('recording');
+                }
+            }
+        });
+
+
+
+        async function sendPhoto(file) {
+            try {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                
+                reader.onload = () => {
+                    const base64Image = reader.result;
+                    
+                    socket.emit('photo_message', {
+                        chat_id: chat_id,
+                        image: base64Image,
+                        user_id: current_user_id,
+                        file_name: file.name,
+                        mime_type: file.type
+                    });
+                    console.log('Photo sent');
+                };
+            } catch (error) {
+                console.error('an error occured while sending the photo:', error);
+            }
         }
     </script>
 <body>
