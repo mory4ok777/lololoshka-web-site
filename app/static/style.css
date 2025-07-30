@@ -1,6 +1,13 @@
 /* Основные стили */
+@font-face {
+    font-family: 'Minecraft'; 
+    src: url('Minecraft.ttf') format('truetype'); /* Шлях до файлу */
+    font-weight: normal;
+    font-style: normal;
+}
+
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Minecraft', sans-serif;
     margin: 0;
     padding: 0;
     background-color: #f5f5f5;
@@ -25,11 +32,23 @@ body::before {
 /* Шапка с изображением verhaja kartinka*/
 header {
     height: 40vh;
-    background-color: rgba(116, 84, 2, 0.9);
+    background: url('bg.png') no-repeat center center;
     background-size: cover;
     background-position: center;
     width: 100%;
     position: relative;
+}
+
+header h1 {
+    color: rgb(28, 7, 58);
+    font-size: 7rem;
+    margin: 0;
+    padding: 1rem;
+    text-align: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
 /* Навигационное меню */
@@ -77,11 +96,18 @@ main {
     border-radius: 20px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     min-height: 600px; /* Высота длинной картинки */
+    box-shadow: 11px 8px 0px rgb(102, 12, 110);
+}
+
+.register-container p {
+    font-size: 1.2rem;
+    color: #2a092a;
+    margin-bottom: 1.5rem;
 }
 
 .register-container h2 {
     margin-top: 0;
-    color: #000000;
+    color: #b26fe3;
 }
 
 .register-container form {
@@ -95,7 +121,7 @@ main {
     flex-direction: column;
     gap: 0.5rem;
     font-weight: bold;
-    color: #000000;
+    color: #b15fb1;
 }
 
 .register-container input {
@@ -108,7 +134,7 @@ main {
 
 .register-container button {
     background-color: rgba(230, 167, 86, 0.8);
-    color: rgb(0, 0, 0);
+    color: rgb(129, 22, 137);
     border: none;
     padding: 1rem;
     font-size: 1rem;
@@ -131,3 +157,4 @@ footer {
     color: white;
     margin-top: 2rem;
 }
+
