@@ -53,8 +53,11 @@
             <button onclick="sendMessage()">Send</button>
             <button id="record-button">Audio</button>
             <button onclick="uploadPhoto()">Photo</button>
-
+            <button id="record-circle">vidio</button>
+            <button id="stop-circle" style="display:none;">stop</button>
+            <video id="circle-prev" style="display:none;" autoplay muted></video> 
         </div>
+
     </div>
     <audio id="player" controls style="display: none;"> </audio>
     <script>
@@ -110,6 +113,28 @@
             div.appendChild(audio);
             document.getElementById('messages').appendChild(div);
             scrollToBottom();
+        });
+        
+        socket.on("video_message", function(msg){
+
+          const container = document.createElement('div');
+            container.className = msg.sender_id == current_user_id ? 
+                'video-message-container sent' : 'video-message-container received';
+            
+            const video = document.createElement('video');
+            video.className = 'round-video';
+            video.onclick = function() { VideoOnclick(this); };
+            video.style.backgroundColor = '#000'; 
+            
+            const source = document.createElement('source');
+            source.src = msg.video_url + '?t=' + new Date().getTime();
+            source.type = 'video/webm';
+
+            video.appendChild(source);
+            container.appendChild(video);
+            document.getElementById('messages').appendChild(container);
+            scrollToBottom();
+
         });
 
         socket.on('photo_message', function(msg) {
@@ -234,6 +259,111 @@
                 }
             }
         });
+        
+        document.getElementById('record-circle').addEventListener('click', async function() {
+            try {
+                videoStream = await navigator.mediaDevices.getUserMedia({
+                    video: true,
+                    audio: true
+                });
+                
+                const videoPrev = document.getElementById('circle-prev');
+                videoPrev.srcObject = videoStream;
+                videoPrev.style.display = 'block';
+                
+                mediaRecorder = new MediaRecorder(videoStream, {
+                    mimeType: 'video/webm;codecs=vp9'
+                });
+                
+                videoChunks = [];
+
+                mediaRecorder.ondataavailable = event => {
+                    if (event.data.size > 0) {
+                        videoChunks.push(event.data); 
+                    }
+                };
+                
+                mediaRecorder.onstop = async () => {
+                    const videoBlob = new Blob(videoChunks, { type: 'video/webm' });
+                    
+                    if (videoBlob.size > 20 * 1024 * 1024) {
+                        alert('Video is too large. Maximum size is 20MB.');
+                        return;
+                    }
+                    
+                    const reader = new FileReader();
+                    reader.readAsDataURL(videoBlob);
+                    
+                    reader.onload = () => {
+                        socket.emit('video_message', {
+                            chat_id: chat_id,
+                            video: reader.result,
+                            user_id: current_user_id,
+                            mime_type: 'video/webm'
+                        });
+                    };
+                    
+                    videoStream.getTracks().forEach(track => track.stop());
+                    document.getElementById('circle-prev').style.display = 'none';
+                    document.getElementById('record-circle').style.display = 'inline-block';
+                    document.getElementById('stop-circle').style.display = 'none';
+                };
+                
+                mediaRecorder.start(100); 
+                
+                setTimeout(() => {
+                    if (mediaRecorder.state === 'recording') {
+                        mediaRecorder.stop();
+                    }
+                }, maxVideoDuration);
+                
+                this.style.display = 'none';
+                document.getElementById('stop-circle').style.display = 'inline-block';
+                
+            } catch (error) {
+                console.error('Error accessing camera:', error);
+                alert('Could not access camera. Please check permissions.');
+            }
+        });
+
+        document.getElementById('stop-circle').addEventListener('click', function() {
+            if (mediaRecorder && mediaRecorder.state === 'recording') {
+                mediaRecorder.stop();
+            }
+            
+            document.getElementById('record-circle').style.display = 'inline-block';
+            this.style.display = 'none';
+        });
+
+
+
+
+
+        function VideoOnclick(video) {
+            document.querySelectorAll(".round-video").forEach(vid=>{
+                if(vid !== video){
+                    vid.pause();
+                    vid.currentTime = 0;
+                }
+            }); 
+            if(video.paused){
+                video.play();
+            }
+            else{
+                video.pause();
+                video.currentTime = 0
+            }
+        }
+
+        document.getElementById('stop-circle').addEventListener('click', function() {
+            if (mediaRecorder && mediaRecorder.state === 'recording') {
+                mediaRecorder.stop();
+            }
+            
+            document.getElementById('record-circle').style.display = 'inline-block';
+            this.style.display = 'none';
+        });
+
 
 
 

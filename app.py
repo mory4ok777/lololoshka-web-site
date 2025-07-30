@@ -1,3 +1,4 @@
+from flask import Flask
 from app import create_app,socketio,db
 app = create_app()
 with app.app_context():

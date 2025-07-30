@@ -11,7 +11,7 @@ main = Blueprint('main', __name__)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 PHOTOS_DIR = os.path.join(BASE_DIR,'photos')
 AUDIO_DIR = os.path.join(BASE_DIR,'audio_messages')
-
+VIDEOS_DIR = os.path.join(BASE_DIR,'video_messages')
 
 @main.route('/audio_messages/<filename>')
 def send_audio(filename):
@@ -240,4 +240,43 @@ def handle_photo_message(data):
         }, room=str(chat_id))
     except Exception as e:
         print(f"Photo message error: {str(e)}")
-                                                                                                                                                                                                          
+
+@socketio.on('video_message')
+def handle_video_message(data):
+    try:
+        chat_id = data['chat_id']
+        user_id = data['user_id']
+        video_data = data['video']
+        mime_type = data.get('mime_type','video/webm')
+        
+        if 'base64,' in video_data:
+            video_data = video_data.split('base64,')[1]   
+            
+        video_bytes = base64.b64decode(video_data)
+        os.makedirs(VIDEOS_DIR, exist_ok=True)
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        filename = f"video_{timestamp}_{user_id}.webm"
+        filepath = os.path.join(VIDEOS_DIR,filename)
+        with open(filepath, 'wb') as f:
+            f.write(video_bytes)
+
+        message = MSG(
+            sender_id = user_id,
+            chat_id = chat_id,
+            message_type = 'video',
+            media_url = f'/video_messages/{filename}',
+            mime_type = mime_type,
+            timestamp = datetime.now()
+        )
+        db.session.add(message)
+        db.session.commit()
+        socketio.emit('video_message', {
+            'message_id': message.id,
+            'chat_id': chat_id,
+            'sender_id': user_id,
+            'video_url': f'/video_messages/{filename}',
+            'mime_type': mime_type,
+            'timestamp': timestamp,
+        }, room=str(chat_id))
+    except Exception as e:
+        print(f"Photo message error: {str(e)}")
