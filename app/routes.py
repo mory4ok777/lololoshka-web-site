@@ -19,7 +19,12 @@ def send_audio(filename):
         return send_from_directory(AUDIO_DIR, filename)
     except FileNotFoundError:
         return "Audio not found", 404
-
+@main.route('/video_messages/<filename>')  # Add 'path:' converter
+def send_video(filename):
+    try:
+        return send_from_directory(VIDEOS_DIR, filename)
+    except FileNotFoundError:
+        return "Video not found", 404
 @main.route('/photos/<filename>')
 def send_photo(filename):
     try:

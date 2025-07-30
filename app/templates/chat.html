@@ -23,12 +23,12 @@
         
     </div>
 
-    <div class="chat-messages" id="messages">
+           <div class="chat-messages" id="messages">
             {% for msg in messages %}
                 {% if msg.message_type == 'video' %}
                     <div class="video-message-container {% if msg.sender_id == current_user.id %}sent{% else %}received{% endif %}">
                             <video class="round-video" onclick="VideoOnclick(this)">
-                            <source src="{{ url_for('main.send_video', filename=msg.media_url.split('/')[-1]) }}" type="video/webm">
+                            <source src="{{ url_for('main.send_video', filename=msg.media_url) }}" type="video/webm">
                         </video>
                     </div>
                 {% else %}
