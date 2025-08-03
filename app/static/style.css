@@ -11,7 +11,7 @@ body {
     margin: 0;
     padding: 0;
     background-color: #f5f5f5;
-    color: #000000;
+    color: #ffffff;
     min-height: 100vh;
     position: relative;
 }
@@ -48,12 +48,13 @@ header h1 {
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);  
 }
 
 /* Навигационное меню */
 nav {
-    background-image: url('nav-image.png');
+    background-color: rgba(11, 0, 10, 0.5);
+
     background-size: cover;
     background-position: center;
     border-radius: 20px;
@@ -90,13 +91,14 @@ main {
 /* Форма регистрации (длинная картинка) */
 .register-container {
     max-width: 550px;
-    margin-left: 10%;
+    margin: 0 auto;
     padding: 2rem;
     background-color:  rgba(11, 0, 10, 0.9);
     border-radius: 20px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     min-height: 600px; /* Высота длинной картинки */
-    box-shadow: 11px 8px 0px rgb(102, 12, 110);
+    box-shadow: 11px 5px 100px rgb(102, 12, 110);
+    position: center;
 }
 
 .register-container p {
@@ -129,7 +131,9 @@ main {
     border: 1px solid #a027f1;
     border-radius: 4px;
     font-size: 1rem;
-    background-color: rgba(204, 0, 204, 0.10);
+    background-color: rgba(72, 12, 97, 0.679);
+    color: azure;
+
 }
 
 .register-container button {
@@ -153,8 +157,8 @@ main {
 footer {
     text-align: center;
     padding: 1rem;
-    background-color: #444;
-    color: white;
+    background-color: #000000;
+    color: rgb(71, 0, 75);
     margin-top: 2rem;
 }
 

@@ -61,9 +61,8 @@ def register():
 @main.route('/')
 @login_required
 def home():
-    messages = MSG.query.all()
     users = User.query.all()
-    return render_template("chat.html", messages=messages, users=users)
+    return render_template("chat.html",users=users)
 @main.route('/chat/<int:chat_id>',methods = ['GET'])
 @login_required
 def chat(chat_id):
